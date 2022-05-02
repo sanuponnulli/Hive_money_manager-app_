@@ -3,6 +3,7 @@ import 'dart:ffi';
 import 'package:flutter/material.dart';
 import 'package:moneymanagement/db/category/category_db.dart';
 import 'package:moneymanagement/db/models/category/category_model.dart';
+import 'package:moneymanagement/db/transactions/transactions_db.dart';
 import 'package:moneymanagement/screens/add_transactions/screen_add_transaction.dart';
 import 'package:moneymanagement/screens/category/categoryaddpopup.dart';
 import 'package:moneymanagement/screens/category/screencategory.dart';
@@ -18,6 +19,8 @@ class screenhome extends StatelessWidget {
   ];
   @override
   Widget build(BuildContext context) {
+    categorydb.instance.refreshUi();
+    transactionDb.instance.refresh();
     return Scaffold(
         appBar: AppBar(
           title: Text("MONEY MANAGER"),

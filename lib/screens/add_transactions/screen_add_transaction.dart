@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:moneymanagement/db/category/category_db.dart';
 import 'package:moneymanagement/db/models/category/category_model.dart';
+import 'package:moneymanagement/db/models/transaction/transaction_model.dart';
+import 'package:moneymanagement/db/transactions/transactions_db.dart';
 
 class Screenaddtransactions extends StatefulWidget {
   static const routeName = "add-transaction";
@@ -14,7 +16,10 @@ class _ScreenaddtransactionsState extends State<Screenaddtransactions> {
   DateTime? _selecteddate;
   categorytype? _selectedcategorytype;
   categorymodel? _selectedcategorymodel;
-  String? categoryID;
+  String? _categoryID;
+
+  final _amountcontroller = TextEditingController();
+  final _purposecontroller = TextEditingController();
   @override
   void initState() {
     _selectedcategorytype = categorytype.income;
@@ -24,6 +29,7 @@ class _ScreenaddtransactionsState extends State<Screenaddtransactions> {
 
   @override
   Widget build(BuildContext context) {
+    categorydb.instance.refreshUi();
     return Scaffold(
       body: SafeArea(
           child: Padding(
@@ -32,10 +38,12 @@ class _ScreenaddtransactionsState extends State<Screenaddtransactions> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             TextFormField(
+              controller: _purposecontroller,
               keyboardType: TextInputType.text,
               decoration: InputDecoration(hintText: "purpose"),
             ),
             TextFormField(
+              controller: _amountcontroller,
               keyboardType: TextInputType.number,
               decoration: InputDecoration(hintText: "amount"),
             ),
@@ -55,7 +63,7 @@ class _ScreenaddtransactionsState extends State<Screenaddtransactions> {
                     _selecteddate = _selecteddatetemp;
                   });
                 },
-                icon: Icon(Icons.calendar_today),
+                icon: const Icon(Icons.calendar_today),
                 label: Text(_selecteddate == null
                     ? "select date"
                     : _selecteddate.toString()))
@@ -72,7 +80,7 @@ class _ScreenaddtransactionsState extends State<Screenaddtransactions> {
                         onChanged: (newvalue) {
                           setState(() {
                             _selectedcategorytype = categorytype.income;
-                            categoryID = null;
+                            _categoryID = null;
                           });
                         }),
                     Text("income"),
@@ -86,17 +94,17 @@ class _ScreenaddtransactionsState extends State<Screenaddtransactions> {
                         onChanged: (newvalue) {
                           setState(() {
                             _selectedcategorytype = categorytype.expense;
-                            categoryID = null;
+                            _categoryID = null;
                           });
                         }),
-                    Text("expense"),
+                    const Text("expense"),
                   ],
                 ),
               ],
             ),
             DropdownButton<String>(
                 hint: Text("select category"),
-                value: categoryID,
+                value: _categoryID,
                 items: (_selectedcategorytype == categorytype.income
                         ? categorydb().incomecategorylist
                         : categorydb().expensecategorylist)
@@ -105,18 +113,60 @@ class _ScreenaddtransactionsState extends State<Screenaddtransactions> {
                   return DropdownMenuItem(
                     child: Text(e.name),
                     value: e.id,
+                    onTap: () {
+                      _selectedcategorymodel = e;
+                    },
                   );
                 }).toList(),
                 onChanged: (selectedvalue) {
-                  print("selected value");
+                  // print("selected value");
                   setState(() {
-                    categoryID = selectedvalue;
+                    _categoryID = selectedvalue;
                   });
                 }),
-            ElevatedButton(onPressed: () {}, child: Text("submit"))
+            ElevatedButton(
+                onPressed: () async {
+                  await addtransactions();
+                },
+                child: Text("submit"))
           ],
         ),
       )),
     );
+  }
+
+  Future<void> addtransactions() async {
+    final _purposetext = _purposecontroller.text;
+    final _amounttext = _amountcontroller.text;
+
+    if (_purposetext.isEmpty) {
+      return print("object");
+    }
+    if (_amounttext.isEmpty) {
+      return print("object");
+    }
+    if (_categoryID == null) {
+      return print("object");
+    }
+    if (_selecteddate == null) {
+      return print("object");
+    }
+    if (_selectedcategorymodel == null) {
+      return print("object");
+    }
+    final _parseamount = double.tryParse(_amounttext);
+    if (_parseamount == null) {
+      return print("object");
+    }
+
+    final _obj = transacctionalmodel(
+        purpose: _purposetext,
+        amount: _parseamount,
+        date: _selecteddate!,
+        type: _selectedcategorytype!,
+        model: _selectedcategorymodel!);
+    await transactionDb().addtransactions(_obj);
+    Navigator.of(context).pop();
+    transactionDb.instance.refresh();
   }
 }
