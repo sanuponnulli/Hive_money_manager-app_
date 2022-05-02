@@ -1,7 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/adapters.dart';
+import 'package:moneymanagement/db/models/category/category_model.dart';
+import 'package:moneymanagement/screens/add_transactions/screen_add_transaction.dart';
 import 'package:moneymanagement/screens/home/screenhome.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  Hive.initFlutter();
+  if (!Hive.isAdapterRegistered(categorymodelAdapter().typeId)) {
+    Hive.registerAdapter(categorymodelAdapter());
+  }
+  if (!Hive.isAdapterRegistered(categorytypeAdapter().typeId)) {
+    Hive.registerAdapter(categorytypeAdapter());
+  }
   runApp(const MyApp());
 }
 
@@ -25,8 +36,9 @@ class MyApp extends StatelessWidget {
           // is not restarted.
           primarySwatch: Colors.blue,
         ),
-        home: MaterialApp(
-          home: screenhome(),
-        ));
+        home: MaterialApp(home: screenhome(), routes: {
+          Screenaddtransactions.routeName: (ctx) =>
+              const Screenaddtransactions(),
+        }));
   }
 }
