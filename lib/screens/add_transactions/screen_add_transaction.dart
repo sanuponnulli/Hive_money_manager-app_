@@ -22,6 +22,7 @@ class _ScreenaddtransactionsState extends State<Screenaddtransactions> {
   final _purposecontroller = TextEditingController();
   @override
   void initState() {
+    categorydb.instance.refreshUi();
     _selectedcategorytype = categorytype.income;
     // TODO: implement initState
     super.initState();
@@ -29,7 +30,6 @@ class _ScreenaddtransactionsState extends State<Screenaddtransactions> {
 
   @override
   Widget build(BuildContext context) {
-    categorydb.instance.refreshUi();
     return Scaffold(
       body: SafeArea(
           child: Padding(

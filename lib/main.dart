@@ -41,8 +41,7 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.blue,
         ),
         home: MaterialApp(home: screenhome(), routes: {
-          Screenaddtransactions.routeName: (ctx) =>
-              const Screenaddtransactions(),
+          Screenaddtransactions.routeName: (ctx) => Screenaddtransactions(),
         }));
   }
 }

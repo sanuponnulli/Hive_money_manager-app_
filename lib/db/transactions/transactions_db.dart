@@ -7,7 +7,7 @@ const DB_NAME = "TRANSACTION-DATABASE";
 abstract class transactionsdbfunctions {
   Future<void> addtransactions(transacctionalmodel obj);
   Future<List<transacctionalmodel>> getalltransactions();
-  // Future<void> deletecategory(String categoryid);
+  Future<void> deletecategory(String id);
 }
 
 class transactionDb implements transactionsdbfunctions {
@@ -38,10 +38,10 @@ class transactionDb implements transactionsdbfunctions {
     return _db.values.toList();
   }
 
-  // @override
-  // Future<void> deletecategory(String categoryid) async {
-  //   final _categorydb = await Hive.openBox<transacctionalmodel>(DB_NAME);
-  //   await _categorydb.delete(categoryid);
-  //   refresh();
-  // }
+  @override
+  Future<void> deletecategory(String id) async {
+    final _categorydb = await Hive.openBox<transacctionalmodel>(DB_NAME);
+    await _categorydb.delete(id);
+    refresh();
+  }
 }

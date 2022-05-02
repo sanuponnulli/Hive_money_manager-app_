@@ -19,8 +19,8 @@ class screenhome extends StatelessWidget {
   ];
   @override
   Widget build(BuildContext context) {
-    categorydb.instance.refreshUi();
-    transactionDb.instance.refresh();
+    // categorydb.instance.refreshUi();
+    // transactionDb.instance.refresh();
     return Scaffold(
         appBar: AppBar(
           title: Text("MONEY MANAGER"),
